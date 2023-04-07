@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using MoonSharp.Interpreter;
+using System.IO;
+using System;
 
 public class Player
 {
@@ -14,6 +16,7 @@ public class Player
 
     }
 
+    //Codigo em C#
     public GameObject player;
     Torre[] torre;
     GameObject centro;
@@ -26,47 +29,135 @@ public class Player
 
     public int qualTorre;
     public int qualPlayer;
+
     Texto texto;
+
+
+
+    //Codigo da liguagem LUA
+
+    Script script = new Script();
+    DynValue dynValue;
+    string lua =
+@"
+
+--TORRE = 0
+--CENTRO = 1
+--SEGUIR = 2
+--PARADO = 3
+
+
+function Start()
+    ChangeState(0)	
+end
+
+function Update(gameTime)
+	if (ColidiuPlayer() == true) then
+		ChangeState(1)
+	end
+	if (ConquistouTorre() == true) then
+		ChangeState(1)
+	end
+	if (PegouArma() == true) then
+		ChangeState(1)
+	end
+
+end"
+        ;
+
+    string caminho = "";
+
+    //Variaveis que serão utilizadas para auxiliar o arquivo lua
+    public bool colidiuPlayer = false;
+    public bool conquistouTorre = false;
+    public bool pegouArma = false;
+
+    
+
 
     public Player(Mesh mesh, Material material, Torre[] torre, GameObject centro, Texto texto, Vector3 posInicial, Color color)
     {
         
-        CreateGameObject(mesh, material);
+        
 
         this.torre = torre;
         this.centro = centro;
         this.texto = texto;
         this.color = color;
+        CreateGameObject(mesh, material);
+
         texto.canvas.transform.SetParent(player.transform);
 
 
         player.GetComponent<MeshRenderer>().material.color = color;
         player.transform.position = posInicial;
 
-        qualTorre = Random.Range(0, torre.Length);
+        qualTorre = UnityEngine.Random.Range(0, torre.Length);
+
         for (int i = 0; i < Main.instance.player.Length; i++)
         {
             if(Main.instance.player[i] != this)
             {
-                qualPlayer = Random.Range(0, Main.instance.player.Length);
+                qualPlayer = UnityEngine.Random.Range(0, Main.instance.player.Length);
             }
 
             
         }
+
+        caminho = @"D:\Documentos\Ifrj\Setimo periodo\IA\DojoIA\DojoGrupoB\DojoGrupoB\Lua\" + texto.text.GetComponent<TMP_Text>().text +".lua";
+        LoadLua();
+        DeclaraFunction();
+        dynValue = script.Call(script.Globals.Get("Start"));
+
     }
 
     public void Update(float gameTime)
     {
 
+        
+
 
         UpdateState(gameTime);
+
+        LoadLua();
+        dynValue = script.Call(script.Globals.Get("Update"), gameTime);
+
+    }
+
+
+
+    private void LoadLua()
+    {
+
+        if(File.Exists(caminho))
+        {
+            lua = File.ReadAllText(caminho);
+            script.DoString(lua);
+        }
+        else
+        {
+            File.WriteAllText(caminho,lua);
+            script.DoString(lua);
+
+        }
+
+    }
+    private void DeclaraFunction()
+    {
+
+        script.Globals["ColidiuPlayer"] = (Func<bool>)ColidiuPlayer;
+        script.Globals["ConquistouTorre"] = (Func<bool>)ConquistouTorre;
+        script.Globals["PegouArma"] = (Func<bool>)PegouArma;
+        script.Globals["ChangeState"] = (Func<int,int>)ChangeState;
 
 
     }
 
+
+
     private void CreateGameObject(Mesh mesh, Material material)
     {
-        player = new GameObject("Player");
+        player = new GameObject(texto.text.GetComponent<TMP_Text>().text);
         player.AddComponent<MeshFilter>();
         player.AddComponent<MeshRenderer>();
         player.GetComponent<MeshFilter>().mesh = mesh;
@@ -90,9 +181,7 @@ public class Player
         {
 
             case STATE.PARADO:
-                item = Random.Range(0, 4);
-                ChangeState(item);
-                Debug.Log("ITEM: " + item + "  PARADO");
+                
                 break;
 
             case STATE.SEGUIR:
@@ -112,7 +201,7 @@ public class Player
 
     }
 
-    public void ChangeState(int item)
+    public int ChangeState(int item)
     {
 
         /* TORRE = 0
@@ -124,11 +213,11 @@ public class Player
         this.item = item;
         if(this.item == 0)
         {
-            qualTorre = Random.Range(0, torre.Length);
+            qualTorre = UnityEngine.Random.Range(0, torre.Length);
         }
         if (this.item == 2)
         {
-            qualPlayer = Random.Range(0, Main.instance.player.Length);
+            qualPlayer = UnityEngine.Random.Range(0, Main.instance.player.Length);
         }
 
         switch (state)
@@ -209,6 +298,8 @@ public class Player
 
         }
 
+        return 0;
+
     }
 
     private void Seguir(float gameTime, GameObject objeto, GameObject alvo)
@@ -274,21 +365,45 @@ public class Player
             }
             if (this.arma == false && other.gameObject.GetComponent<ColliderPlayer>().arma == false)
             {
-                item = Random.Range(0, 4);
-                ChangeState(item);
-                Debug.Log("Fracos");
+                
+                
             }
-
+            colidiuPlayer = true;
         }
         if (other.gameObject.tag == "Centro")
         {
             arma = true;
-            ChangeState(Random.Range(0, 4));
+            pegouArma = true;
+            
         }
+
+        //limpando as variaveis
+        pegouArma = false;
+        colidiuPlayer = false;
+        conquistouTorre = false;
+
+
     }
+
     public void OnCollisionExit(Collider other)
     {
 
     }
+
+    
+    public bool ColidiuPlayer()
+    {
+        return this.colidiuPlayer;
+    }
+    public bool ConquistouTorre()
+    {
+        return this.conquistouTorre;
+    }
+    public bool PegouArma()
+    {
+        return this.pegouArma;
+    }
+
+
 
 }

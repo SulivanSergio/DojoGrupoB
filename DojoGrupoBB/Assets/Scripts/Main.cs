@@ -45,7 +45,7 @@ public class Main : MonoBehaviour
             texto[i].text.GetComponent<TMP_Text>().SetText("Player" + i);
 
             torre[i] = new Torre(mesh, material, new Vector3(20 * i, 0, 10*1));
-            player[i] = new Player(mesh, material, torre, centro.centro, texto[i],new Vector3(100 * i +20,0,100 *i +20 ),color[i%color.Length] );
+            player[i] = new Player(mesh, material, torre, centro.centro, texto[i],new Vector3(100 * i +20,0,100 *i +20 ),color[i%2] );
         }
 
 

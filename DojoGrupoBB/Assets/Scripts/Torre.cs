@@ -44,7 +44,8 @@ public class Torre
             torre.GetComponent<MeshRenderer>().material.color = color;
             tempo = 0;
             conquista = false;
-            player.ChangeState(Random.Range(0, 4));
+            player.conquistouTorre = true;
+            Debug.Log(player.conquistouTorre);
         }
         
 
