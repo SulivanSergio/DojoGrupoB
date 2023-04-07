@@ -142,6 +142,8 @@ end"
         }
 
     }
+
+
     private void DeclaraFunction()
     {
 
@@ -395,10 +397,12 @@ end"
     {
         return this.colidiuPlayer;
     }
+
     public bool ConquistouTorre()
     {
         return this.conquistouTorre;
     }
+
     public bool PegouArma()
     {
         return this.pegouArma;

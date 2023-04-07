@@ -4,30 +4,33 @@ using UnityEngine;
 
 public class Torre 
 {
-
+    
     public GameObject torre;
     public bool conquista;
     public Color color = Color.white;
     public float tempo = 0;
-    public Player player;
+    
+    List<Player> player = new List<Player>();
+    
+    
 
-    public Torre(Mesh mesh, Material material, Vector3 posInicial)
+    public Torre(Mesh mesh, Material material, Vector3 posInicial, int id)
     {
 
-        torre = new GameObject("Torre");
+        torre = new GameObject("Torre"+ id);
         torre.AddComponent<MeshFilter>();
         torre.AddComponent<MeshRenderer>();
         torre.GetComponent<MeshFilter>().mesh = mesh;
         torre.GetComponent<MeshRenderer>().material = material;
         torre.AddComponent<BoxCollider>();
         torre.GetComponent<BoxCollider>().isTrigger = true;
-
+        torre.GetComponent<MeshRenderer>().material.color = color;
         torre.tag = "Torre";
 
         torre.transform.position = posInicial;
         torre.transform.localScale = new Vector3(1, 3, 1);
 
-
+        
 
     }
 
@@ -40,19 +43,32 @@ public class Torre
         }
         if(tempo > 15f)
         {
-            color = player.color;
+            
+
+            color = this.player[0].color;
             torre.GetComponent<MeshRenderer>().material.color = color;
             tempo = 0;
             conquista = false;
-            player.conquistouTorre = true;
-            Debug.Log(player.conquistouTorre);
+            player[0].conquistouTorre = true;
+            player.RemoveAt(0);
+
+
+            if (player.Count > 0)
+            {
+                if (player[0] != null)
+                {
+                    conquista = true;
+                }
+            }
         }
         
 
     }
     public void PlayerConquistando(Player player)
     {
-        this.player = player;
+        this.player.Add(player);
+
+
     }
 
 
