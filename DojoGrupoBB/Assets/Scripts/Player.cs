@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using MoonSharp.Interpreter;
 
 public class Player
 {
@@ -13,34 +14,45 @@ public class Player
 
     }
 
-    GameObject player;
-    GameObject torre;
+    public GameObject player;
+    Torre[] torre;
     GameObject centro;
     STATE state = STATE.TORRE;
 
     private float speed = 0.5f;
-    private int item = 0;
+    public int item = 0;
+    public bool arma = false;
+    public Color color;
 
-    
+    public int qualTorre;
+    public int qualPlayer;
+    Texto texto;
 
-    public Player(Mesh mesh, Material material, GameObject torre, GameObject centro)
+    public Player(Mesh mesh, Material material, Torre[] torre, GameObject centro, Texto texto, Vector3 posInicial, Color color)
     {
-        player = new GameObject("Player");
-        player.AddComponent<MeshFilter>();
-        player.AddComponent<MeshRenderer>();
-        player.GetComponent<MeshFilter>().mesh = mesh;
-        player.GetComponent<MeshRenderer>().material = material;
-
         
+        CreateGameObject(mesh, material);
 
         this.torre = torre;
         this.centro = centro;
+        this.texto = texto;
+        this.color = color;
+        texto.canvas.transform.SetParent(player.transform);
 
 
-        
+        player.GetComponent<MeshRenderer>().material.color = color;
+        player.transform.position = posInicial;
 
+        qualTorre = Random.Range(0, torre.Length);
+        for (int i = 0; i < Main.instance.player.Length; i++)
+        {
+            if(Main.instance.player[i] != this)
+            {
+                qualPlayer = Random.Range(0, Main.instance.player.Length);
+            }
 
-
+            
+        }
     }
 
     public void Update(float gameTime)
@@ -52,6 +64,25 @@ public class Player
 
     }
 
+    private void CreateGameObject(Mesh mesh, Material material)
+    {
+        player = new GameObject("Player");
+        player.AddComponent<MeshFilter>();
+        player.AddComponent<MeshRenderer>();
+        player.GetComponent<MeshFilter>().mesh = mesh;
+        player.GetComponent<MeshRenderer>().material = material;
+
+        player.AddComponent<BoxCollider>();
+        player.GetComponent<BoxCollider>().isTrigger = true;
+        player.AddComponent<Rigidbody>();
+        player.GetComponent<Rigidbody>().useGravity = false;
+
+        player.AddComponent<ColliderPlayer>();
+
+        player.tag = "Player";
+
+    }
+
     public void UpdateState(float gameTime)
     {
 
@@ -59,15 +90,18 @@ public class Player
         {
 
             case STATE.PARADO:
-
+                item = Random.Range(0, 4);
+                ChangeState(item);
+                Debug.Log("ITEM: " + item + "  PARADO");
                 break;
 
             case STATE.SEGUIR:
-                
+                Seguir(gameTime, player, Main.instance.player[qualPlayer].player);
                 break;
 
             case STATE.TORRE:
-                Seguir(gameTime, player, torre);
+                
+                Seguir(gameTime, player, torre[qualTorre].torre);
                 break;
 
             case STATE.CENTRO:
@@ -78,8 +112,7 @@ public class Player
 
     }
 
-
-    public void ChangeState()
+    public void ChangeState(int item)
     {
 
         /* TORRE = 0
@@ -88,6 +121,15 @@ public class Player
         PARADO = 3
          
           */
+        this.item = item;
+        if(this.item == 0)
+        {
+            qualTorre = Random.Range(0, torre.Length);
+        }
+        if (this.item == 2)
+        {
+            qualPlayer = Random.Range(0, Main.instance.player.Length);
+        }
 
         switch (state)
         {
@@ -191,6 +233,61 @@ public class Player
             objeto.transform.position += new Vector3(0, 0, distancia * speed * gameTime);
         }
 
+
+    }
+
+    public void OnCollisionEnter(Collider other)
+    {
+        
+        if (other.gameObject.tag == "Torre")
+        {
+
+            for (int i = 0; i< torre.Length; i++)
+            {
+                if (other.gameObject == torre[i].torre)
+                {
+                    torre[i].conquista = true;
+                    torre[i].PlayerConquistando(this);
+                }
+                
+            }
+            
+        }
+        if (other.gameObject.tag == "Player")
+        {
+
+            if(this.arma == true && other.gameObject.GetComponent<ColliderPlayer>().arma == true)
+            {
+                player.SetActive(false);
+                other.gameObject.SetActive(false);
+                arma = false;
+            }
+            if(this.arma == true && other.gameObject.GetComponent<ColliderPlayer>().arma == false)
+            {
+                other.gameObject.SetActive(false);
+                arma = false;
+            }
+            if (this.arma == false && other.gameObject.GetComponent<ColliderPlayer>().arma == true)
+            {
+                player.SetActive(false);
+                other.gameObject.GetComponent<ColliderPlayer>().arma = false;
+            }
+            if (this.arma == false && other.gameObject.GetComponent<ColliderPlayer>().arma == false)
+            {
+                item = Random.Range(0, 4);
+                ChangeState(item);
+                Debug.Log("Fracos");
+            }
+
+        }
+        if (other.gameObject.tag == "Centro")
+        {
+            arma = true;
+            ChangeState(Random.Range(0, 4));
+        }
+    }
+    public void OnCollisionExit(Collider other)
+    {
 
     }
 
