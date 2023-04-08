@@ -12,13 +12,17 @@ end
 
 function Update(gameTime)
 	if (ColidiuPlayer() == true) then
-		ChangeState(1)
+		if(RetornaItem() ~= 0) then
+			ChangeState(0)
+        end
 	end
 	if (ConquistouTorre() == true) then
-		ChangeState(1)
+		if(RetornaItem() ~= 0) then
+			ChangeState(0)
+        end
 	end
 	if (PegouArma() == true) then
-		ChangeState(1)
+		ChangeState(0)
 	end
 
 end

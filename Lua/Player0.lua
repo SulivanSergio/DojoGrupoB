@@ -7,7 +7,7 @@
 
 
 function Start()
-    ChangeState(0)	
+    ChangeState(1)	
 end
 
 function Update(gameTime)
@@ -18,7 +18,9 @@ function Update(gameTime)
 		ChangeState(1)
 	end
 	if (PegouArma() == true) then
-		ChangeState(1)
+		if(RetornaItem() ~= 2) then
+			ChangeState(2)
+		end
 	end
 
 end

@@ -50,6 +50,7 @@ public class Torre
             tempo = 0;
             conquista = false;
             player[0].conquistouTorre = true;
+            player[0].score++;
             player.RemoveAt(0);
 
 

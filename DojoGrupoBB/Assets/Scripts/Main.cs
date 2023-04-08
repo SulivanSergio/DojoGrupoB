@@ -27,6 +27,10 @@ public class Main : MonoBehaviour
     [Header("Texto dos Objetos")]
     public GameObject[] text = new GameObject[MAX];
 
+    [Header("Texto dos Ranking")]
+    public TMP_Text textRanking;
+    bool ranking = false;
+
     Color[] color = new Color[MAX];
 
     void Start()
@@ -50,24 +54,110 @@ public class Main : MonoBehaviour
             texto[i].text.GetComponent<TMP_Text>().SetText("Player" + i);
 
             torre[i] = new Torre(mesh, material, new Vector3(20 * i, 0, 10),i);
-            player[i] = new Player(mesh, material, torre, centro.centro, texto[i],new Vector3(10 * i +20,0,1000 ),color[i] );
+            player[i] = new Player(mesh, material, torre, centro.centro, texto[i],new Vector3(10 * i +20,0,1000 ),color[i] ,i);
         }
 
 
     }
 
-    
+
     void Update()
     {
-        for (int i = 0; i < player.Length; i++)
+        if (ranking == false)
         {
-            player[i].Update(Time.deltaTime);
-        }
 
-        for (int i = 0; i < torre.Length; i++)
-        {
-            torre[i].Update(Time.deltaTime);
-        }
 
+            for (int i = 0; i < player.Length; i++)
+            {
+                player[i].Update(Time.deltaTime);
+            }
+
+            for (int i = 0; i < torre.Length; i++)
+            {
+                torre[i].Update(Time.deltaTime);
+
+            }
+
+            for (int i = 0; i < player.Length; i++)
+            {
+                int aux = 0;
+                for (int j = 0; j < torre.Length; j++)
+                {
+                    if (player[i].color == torre[j].color)
+                    {
+                        aux++;
+                    }
+                    if (aux == player.Length)
+                    {
+                        Ranking();
+                    }
+
+                }
+
+
+            }
+            int auxRanking = 0;
+            for (int i = 0; i < player.Length; i++)
+            {
+
+                if (player[i].player.activeSelf == false)
+                {
+
+                    auxRanking++;
+                }
+                if (auxRanking >= player.Length - 1)
+                {
+
+                    Ranking();
+                }
+
+
+            }
+
+        }
     }
+
+
+    private void Ranking()
+    {
+        if (ranking == false)
+        {
+            Player aux;
+            Player[] vetorOrdenado = new Player[player.Length];
+
+            for (int i = 0; i < player.Length; i++)
+            {
+
+                vetorOrdenado[i] = player[i];
+
+            }
+
+            for (int i = 0; i < player.Length; i++)
+            {
+                for (int j = 0; j < player.Length; j++)
+                {
+                    if (vetorOrdenado[i].score > vetorOrdenado[j].score)
+                    {
+                        aux = vetorOrdenado[i];
+                        vetorOrdenado[i] = vetorOrdenado[j];
+                        vetorOrdenado[j] = aux;
+
+
+                    }
+
+
+                }
+
+            }
+            for (int i = 0; i < player.Length; i++)
+            {
+                textRanking.text += "Nome: " + vetorOrdenado[i].player.name + " Score: " + vetorOrdenado[i].score + "\n";
+            }
+            ranking = true;
+        }
+    }
+   
+
+
+
 }

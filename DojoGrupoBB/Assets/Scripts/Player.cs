@@ -30,6 +30,8 @@ public class Player
     public int qualTorre;
     public int qualPlayer;
 
+    public int score = 0;
+
     Texto texto;
 
 
@@ -53,13 +55,17 @@ end
 
 function Update(gameTime)
 	if (ColidiuPlayer() == true) then
-		ChangeState(1)
+		if(RetornaItem() ~= 0) then
+			ChangeState(0)
+        end
 	end
 	if (ConquistouTorre() == true) then
-		ChangeState(1)
+		if(RetornaItem() ~= 0) then
+			ChangeState(0)
+        end
 	end
 	if (PegouArma() == true) then
-		ChangeState(1)
+		ChangeState(0)
 	end
 
 end"
@@ -71,11 +77,11 @@ end"
     public bool colidiuPlayer = false;
     public bool conquistouTorre = false;
     public bool pegouArma = false;
-
+    int id;
     
 
 
-    public Player(Mesh mesh, Material material, Torre[] torre, GameObject centro, Texto texto, Vector3 posInicial, Color color)
+    public Player(Mesh mesh, Material material, Torre[] torre, GameObject centro, Texto texto, Vector3 posInicial, Color color, int id)
     {
         
         
@@ -84,6 +90,7 @@ end"
         this.centro = centro;
         this.texto = texto;
         this.color = color;
+        this.id = id;
         CreateGameObject(mesh, material);
 
         texto.canvas.transform.SetParent(player.transform);
@@ -150,6 +157,7 @@ end"
         script.Globals["ColidiuPlayer"] = (Func<bool>)ColidiuPlayer;
         script.Globals["ConquistouTorre"] = (Func<bool>)ConquistouTorre;
         script.Globals["PegouArma"] = (Func<bool>)PegouArma;
+        script.Globals["RetornaItem"] = (Func<int>)RetornaItem;
         script.Globals["ChangeState"] = (Func<int,int>)ChangeState;
 
 
@@ -220,6 +228,13 @@ end"
         if (this.item == 2)
         {
             qualPlayer = UnityEngine.Random.Range(0, Main.instance.player.Length);
+            if (qualPlayer == id || Main.instance.player[qualPlayer].player.activeSelf == false)
+            {
+                ChangeState(2);
+            }
+                
+                    
+             
         }
 
         switch (state)
@@ -354,16 +369,21 @@ end"
                 player.SetActive(false);
                 other.gameObject.SetActive(false);
                 arma = false;
+                pegouArma = false;
+                score++;
             }
             if(this.arma == true && other.gameObject.GetComponent<ColliderPlayer>().arma == false)
             {
                 other.gameObject.SetActive(false);
                 arma = false;
+                pegouArma = false;
+                score++;
             }
             if (this.arma == false && other.gameObject.GetComponent<ColliderPlayer>().arma == true)
             {
                 player.SetActive(false);
                 other.gameObject.GetComponent<ColliderPlayer>().arma = false;
+                
             }
             if (this.arma == false && other.gameObject.GetComponent<ColliderPlayer>().arma == false)
             {
@@ -380,7 +400,7 @@ end"
         }
 
         //limpando as variaveis
-        pegouArma = false;
+        
         colidiuPlayer = false;
         conquistouTorre = false;
 
@@ -408,6 +428,9 @@ end"
         return this.pegouArma;
     }
 
-
+    public int RetornaItem()
+    {
+        return this.item;
+    }
 
 }
