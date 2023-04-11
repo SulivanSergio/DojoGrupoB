@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using MoonSharp.Interpreter;
 using System.IO;
@@ -81,20 +82,21 @@ end"
     
 
 
-    public Player(Mesh mesh, Material material, Torre[] torre, GameObject centro, Texto texto, Vector3 posInicial, Color color, int id)
+    public Player(Mesh mesh, Material material, Torre[] torre, GameObject centro,  Vector3 posInicial, Color color, int id)
     {
-        
-        
+
+        Debug.Log("AAAAAAAAAA");
 
         this.torre = torre;
         this.centro = centro;
-        this.texto = texto;
         this.color = color;
         this.id = id;
+
+        
+
         CreateGameObject(mesh, material);
 
-        texto.canvas.transform.SetParent(player.transform);
-
+        Debug.Log("22222222222");
 
         player.GetComponent<MeshRenderer>().material.color = color;
         player.transform.position = posInicial;
@@ -111,7 +113,12 @@ end"
             
         }
 
-        caminho = @"D:\Documentos\Ifrj\Setimo periodo\IA\DojoIA\DojoGrupoB\DojoGrupoB\Lua\" + texto.text.GetComponent<TMP_Text>().text +".lua";
+        this.texto = new Texto(this.player);
+        this.texto.textGO.name = "Player" + this.id.ToString();
+        this.texto.textGO.GetComponent<Text>().text = this.texto.textGO.name;
+
+
+        caminho = @"D:\Documentos\Ifrj\Setimo periodo\IA\DojoIA\DojoGrupoB\DojoGrupoB\Lua\" + this.texto.textGO.name + ".lua";
         LoadLua();
         DeclaraFunction();
         dynValue = script.Call(script.Globals.Get("Start"));
@@ -167,7 +174,7 @@ end"
 
     private void CreateGameObject(Mesh mesh, Material material)
     {
-        player = new GameObject(texto.text.GetComponent<TMP_Text>().text);
+        player = new GameObject("Player" + this.id.ToString());
         player.AddComponent<MeshFilter>();
         player.AddComponent<MeshRenderer>();
         player.GetComponent<MeshFilter>().mesh = mesh;

@@ -20,12 +20,7 @@ public class Main : MonoBehaviour
     Torre[] torre = new Torre[MAX];
     Centro centro;
 
-    Texto[] texto = new Texto[MAX];
-
-    [Header("Canvas dos Objetos")]
-    public GameObject []canvas = new GameObject[MAX];
-    [Header("Texto dos Objetos")]
-    public GameObject[] text = new GameObject[MAX];
+    
 
     [Header("Texto dos Ranking")]
     public TMP_Text textRanking;
@@ -48,13 +43,9 @@ public class Main : MonoBehaviour
 
         for (int i = 0; i < player.Length; i++)
         {
-            texto[i] = new Texto();
-            texto[i].canvas = canvas[i];
-            texto[i].text = text[i];
-            texto[i].text.GetComponent<TMP_Text>().SetText("Player" + i);
-
+            
             torre[i] = new Torre(mesh, material, new Vector3(20 * i, 0, 10),i);
-            player[i] = new Player(mesh, material, torre, centro.centro, texto[i],new Vector3(10 * i +20,0,1000 ),color[i] ,i);
+            player[i] = new Player(mesh, material, torre, centro.centro, new Vector3(10 * i +20,0,1000 ),color[i] ,i);
         }
 
 
