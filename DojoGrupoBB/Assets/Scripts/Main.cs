@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 
 public class Main : MonoBehaviour
@@ -20,10 +21,9 @@ public class Main : MonoBehaviour
     Torre[] torre = new Torre[MAX];
     Centro centro;
 
-    
 
-    [Header("Texto dos Ranking")]
-    public TMP_Text textRanking;
+
+    Texto texto;
     bool ranking = false;
 
     Color[] color = new Color[MAX];
@@ -40,6 +40,7 @@ public class Main : MonoBehaviour
 
 
         centro = new Centro(meshCentro, material,new Vector3(50,0,0));
+        texto = new Texto(centro.centro,RenderMode.ScreenSpaceOverlay, Vector3.one);
 
         for (int i = 0; i < player.Length; i++)
         {
@@ -142,7 +143,7 @@ public class Main : MonoBehaviour
             }
             for (int i = 0; i < player.Length; i++)
             {
-                textRanking.text += "Nome: " + vetorOrdenado[i].player.name + " Score: " + vetorOrdenado[i].score + "\n";
+                texto.textGO.GetComponent<Text>().text += "Nome: " + vetorOrdenado[i].player.name + " Score: " + vetorOrdenado[i].score + "\n";
             }
             ranking = true;
         }

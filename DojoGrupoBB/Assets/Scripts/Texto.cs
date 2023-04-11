@@ -10,7 +10,7 @@ public class Texto
     Canvas canvas;
     Text text;
 
-    public Texto(GameObject pai)
+    public Texto(GameObject pai, RenderMode renderMode, Vector3 scale)
     {
         gameObject = new GameObject("Canvas");
         gameObject.AddComponent<RectTransform>();
@@ -30,8 +30,8 @@ public class Texto
         textGO.GetComponent<Text>().alignment = TextAnchor.UpperCenter;
         textGO.transform.parent = gameObject.transform;
 
-        gameObject.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
-        gameObject.GetComponent<RectTransform>().localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        gameObject.GetComponent<Canvas>().renderMode = renderMode;
+        gameObject.GetComponent<RectTransform>().localScale = scale;
 
         
         gameObject.transform.parent = pai.transform;

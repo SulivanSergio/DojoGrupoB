@@ -85,7 +85,7 @@ end"
     public Player(Mesh mesh, Material material, Torre[] torre, GameObject centro,  Vector3 posInicial, Color color, int id)
     {
 
-        Debug.Log("AAAAAAAAAA");
+        
 
         this.torre = torre;
         this.centro = centro;
@@ -96,7 +96,7 @@ end"
 
         CreateGameObject(mesh, material);
 
-        Debug.Log("22222222222");
+        
 
         player.GetComponent<MeshRenderer>().material.color = color;
         player.transform.position = posInicial;
@@ -113,7 +113,7 @@ end"
             
         }
 
-        this.texto = new Texto(this.player);
+        this.texto = new Texto(this.player, RenderMode.WorldSpace, new Vector3(0.1f, 0.1f, 0.1f));
         this.texto.textGO.name = "Player" + this.id.ToString();
         this.texto.textGO.GetComponent<Text>().text = this.texto.textGO.name;
 
@@ -363,6 +363,8 @@ end"
                 {
                     torre[i].conquista = true;
                     torre[i].PlayerConquistando(this);
+                    
+                    
                 }
                 
             }
