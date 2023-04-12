@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+
 using MoonSharp.Interpreter;
 using System.IO;
 using System;
@@ -56,14 +56,10 @@ end
 
 function Update(gameTime)
 	if (ColidiuPlayer() == true) then
-		if(RetornaItem() ~= 0) then
-			ChangeState(0)
-        end
+		ChangeState(0)
 	end
 	if (ConquistouTorre() == true) then
-		if(RetornaItem() ~= 0) then
-			ChangeState(0)
-        end
+		ChangeState(0)
 	end
 	if (PegouArma() == true) then
 		ChangeState(0)
@@ -113,7 +109,7 @@ end"
             
         }
 
-        this.texto = new Texto(this.player, RenderMode.WorldSpace, new Vector3(0.1f, 0.1f, 0.1f));
+        this.texto = new Texto(this.player, RenderMode.WorldSpace, new Vector3(0.1f, 0.1f, 0.1f),new Vector2(100,100),Vector3.zero);
         this.texto.textGO.name = "Player" + this.id.ToString();
         this.texto.textGO.GetComponent<Text>().text = this.texto.textGO.name;
 
@@ -136,6 +132,7 @@ end"
         LoadLua();
         dynValue = script.Call(script.Globals.Get("Update"), gameTime);
 
+        this.conquistouTorre = false;
     }
 
 
@@ -231,6 +228,15 @@ end"
         if(this.item == 0)
         {
             qualTorre = UnityEngine.Random.Range(0, torre.Length);
+            if (torre[qualTorre] != null)
+            {
+                if (torre[qualTorre].color == this.color)
+                {
+
+                    ChangeState(0);
+                }
+            }
+
         }
         if (this.item == 2)
         {

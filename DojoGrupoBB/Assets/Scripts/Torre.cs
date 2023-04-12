@@ -14,8 +14,10 @@ public class Torre
     
     
 
-    public Torre(Mesh mesh, Material material, Vector3 posInicial, int id)
+    public Torre(Mesh mesh, Material material, Vector3 posInicial,Color color, int id)
     {
+        this.color = color;
+
 
         torre = new GameObject("Torre"+ id);
         torre.AddComponent<MeshFilter>();

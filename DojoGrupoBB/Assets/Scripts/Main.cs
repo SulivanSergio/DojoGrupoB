@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
 
 
@@ -40,12 +39,12 @@ public class Main : MonoBehaviour
 
 
         centro = new Centro(meshCentro, material,new Vector3(50,0,0));
-        texto = new Texto(centro.centro,RenderMode.ScreenSpaceOverlay, Vector3.one);
+        texto = new Texto(centro.centro,RenderMode.ScreenSpaceOverlay, Vector3.one, new Vector2(200,200),new Vector3(0,150,0));
 
         for (int i = 0; i < player.Length; i++)
         {
             
-            torre[i] = new Torre(mesh, material, new Vector3(20 * i, 0, 10),i);
+            torre[i] = new Torre(mesh, material, new Vector3(Random.Range(0, 20) * i, 0, Random.Range(0,20)),Color.white,i);
             player[i] = new Player(mesh, material, torre, centro.centro, new Vector3(10 * i +20,0,1000 ),color[i] ,i);
         }
 
@@ -143,6 +142,7 @@ public class Main : MonoBehaviour
             }
             for (int i = 0; i < player.Length; i++)
             {
+                
                 texto.textGO.GetComponent<Text>().text += "Nome: " + vetorOrdenado[i].player.name + " Score: " + vetorOrdenado[i].score + "\n";
             }
             ranking = true;

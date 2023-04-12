@@ -10,7 +10,7 @@ public class Texto
     Canvas canvas;
     Text text;
 
-    public Texto(GameObject pai, RenderMode renderMode, Vector3 scale)
+    public Texto(GameObject pai, RenderMode renderMode, Vector3 scale,Vector2 WidthHeight, Vector3 positionText)
     {
         gameObject = new GameObject("Canvas");
         gameObject.AddComponent<RectTransform>();
@@ -22,11 +22,11 @@ public class Texto
 
 
         textGO = new GameObject("Text");
-        textGO.AddComponent<Text>();
         textGO.AddComponent<RectTransform>();
-
+        textGO.AddComponent<Text>();
+        
         textGO.GetComponent<Text>().font = (Font)Resources.GetBuiltinResource(typeof(Font),"Arial.ttf");
-        textGO.GetComponent<Text>().text = "Nulo";
+        textGO.GetComponent<Text>().text = "";
         textGO.GetComponent<Text>().alignment = TextAnchor.UpperCenter;
         textGO.transform.parent = gameObject.transform;
 
@@ -37,7 +37,8 @@ public class Texto
         gameObject.transform.parent = pai.transform;
 
         gameObject.GetComponent<RectTransform>().localPosition = Vector3.zero;
-
+        textGO.GetComponent<RectTransform>().sizeDelta = WidthHeight;
+        textGO.GetComponent<RectTransform>().localPosition = positionText;
     }
 
 
